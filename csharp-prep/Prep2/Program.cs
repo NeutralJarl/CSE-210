@@ -43,7 +43,7 @@ class Program
             Console.WriteLine("Congratulations, You've passed!");
         }
 
-        else if (percent <=70)
+        else if (percent <70)
         {
             Console.WriteLine("Work on improving your grade!");
         }
