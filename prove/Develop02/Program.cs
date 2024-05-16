@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-// Define the Entry class to represent journal entries
+//journal entries
 class Entry
 {
     public string PromptResponse { get; set; }
@@ -21,7 +21,7 @@ class Entry
     }
 }
 
-// Define the Journal class to manage entries
+// Journal itself
 class Journal
 {
     private List<Entry> entries = new List<Entry>();
