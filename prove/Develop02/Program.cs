@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-//journal entries
 class Entry
 {
     public string PromptResponse { get; set; }
@@ -21,50 +20,45 @@ class Entry
     }
 }
 
-// Journal itself
 class Journal
 {
-    private List<Entry> entries = new List<Entry>();
+    private List<Entry> _entries = new List<Entry>();
 
-    // Add a new entry to the journal
     public void AddEntry(string prompt, string response)
     {
         string promptResponse = $"{prompt}|||{response}";
-        entries.Add(new Entry(promptResponse, DateTime.Now));
+        _entries.Add(new Entry(promptResponse, DateTime.Now));
     }
 
-    // Display all entries in the journal
     public void DisplayEntries()
     {
-        foreach (var entry in entries)
+        foreach (var entry in _entries)
         {
             Console.WriteLine(entry);
         }
     }
 
-    // Save the journal to a file
     public void SaveToFile(string filename)
     {
         using (StreamWriter writer = new StreamWriter(filename))
         {
-            foreach (var entry in entries)
+            foreach (var entry in _entries)
             {
                 writer.WriteLine($"{entry.Date},{entry.PromptResponse}");
             }
         }
     }
 
-    // Load entries from a file
     public void LoadFromFile(string filename)
     {
-        entries.Clear(); // Clear existing entries
+        _entries.Clear(); // Clear existing entries
         string[] lines = File.ReadAllLines(filename);
         foreach (string line in lines)
         {
             string[] parts = line.Split(',');
             DateTime date = DateTime.Parse(parts[0]);
             string promptResponse = parts[1];
-            entries.Add(new Entry(promptResponse, date));
+            _entries.Add(new Entry(promptResponse, date));
         }
     }
 }
@@ -80,35 +74,45 @@ class Program
             "What was the best part of my day?",
             "How did I see the hand of the Lord in my life today?",
             "What was the strongest emotion I felt today?",
-            "If I had one thing I could do over today, what would it be?"
+            "If I had one thing I could do over today, what would it be?",
+            "What was the strongest emotion I felt today?",
+            "What made me smile today?",
+            "What am I grateful for today?",
+            "What did I learn today?",
+            "What is one thing I could improve about myself?",
+            "What goal progress did I make today?",
+            "What inspired me today?",
+            "What challenged me today and how did I handle it?",
+            "What am I looking forward to tomorrow?",
+            "What did I do today to take care of myself?",
+            "What was the highlight of my day?"
         };
-        string choice;
 
+        string choice;
         do
         {
             Console.WriteLine("1. Write a new entry");
             Console.WriteLine("2. Display the journal");
             Console.WriteLine("3. Save the journal to a file");
             Console.WriteLine("4. Load the journal from a file");
-            Console.WriteLine("5. Add more prompts");
-            Console.WriteLine("6. Exit");
+            Console.WriteLine("5. Add a new prompt");
+            Console.WriteLine("6. Remove a prompt");
+            Console.WriteLine("7. Exit");
             Console.Write("Enter your choice: ");
             choice = Console.ReadLine();
 
             switch (choice)
             {
                 case "1":
-                    Console.WriteLine("Select a prompt:");
-                    for (int i = 0; i < prompts.Count; i++)
-                    {
-                        Console.WriteLine($"{i + 1}. {prompts[i]}");
-                    }
+                    Random random = new Random();
+                    int randomIndex = random.Next(prompts.Count);
+                    string randomPrompt = prompts[randomIndex];
+
+                    Console.WriteLine("Your random writing prompt:");
+                    Console.WriteLine(randomPrompt);
                     Console.Write("Enter your response: ");
                     string response = Console.ReadLine();
-                    Console.Write("Enter the prompt number: ");
-                    int promptNumber = int.Parse(Console.ReadLine());
-                    string selectedPrompt = prompts[promptNumber - 1];
-                    journal.AddEntry(selectedPrompt, response);
+                    journal.AddEntry(randomPrompt, response);
                     break;
                 case "2":
                     Console.WriteLine("Journal Entries:");
@@ -130,6 +134,28 @@ class Program
                     prompts.Add(newPrompt);
                     break;
                 case "6":
+                    if (prompts.Count == 0)
+                    {
+                        Console.WriteLine("No prompts to remove.");
+                        break;
+                    }
+                    Console.WriteLine("Current prompts:");
+                    for (int i = 0; i < prompts.Count; i++)
+                    {
+                        Console.WriteLine($"{i + 1}. {prompts[i]}");
+                    }
+                    Console.Write("Enter the number of the prompt to remove: ");
+                    if (int.TryParse(Console.ReadLine(), out int promptToRemove) && promptToRemove > 0 && promptToRemove <= prompts.Count)
+                    {
+                        prompts.RemoveAt(promptToRemove - 1);
+                        Console.WriteLine("Prompt removed.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid prompt number.");
+                    }
+                    break;
+                case "7":
                     Console.WriteLine("Exiting program.");
                     break;
                 default:
@@ -137,6 +163,6 @@ class Program
                     break;
             }
 
-        } while (choice != "6");
+        } while (choice != "7");
     }
 }
