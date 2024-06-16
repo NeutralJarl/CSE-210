@@ -1,35 +1,42 @@
 using System;
 
-class Program
+public class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
-        while (true)
+        bool running = true;
+
+        while (running)
         {
-            Console.WriteLine("Mindfulness Activities");
-            Console.WriteLine("1. Breathing Activity");
-            Console.WriteLine("2. Reflection Activity");
-            Console.WriteLine("3. Listing Activity");
+            Console.Clear();
+            Console.WriteLine("Select an activity:");
+            Console.WriteLine("1. Breathing");
+            Console.WriteLine("2. Reflection");
+            Console.WriteLine("3. Listing");
             Console.WriteLine("4. Exit");
-            Console.Write("Choose an activity: ");
             string choice = Console.ReadLine();
 
-            MindfulnessActivity activity = choice switch
+            if (choice == "4")
             {
-                "1" => new BreathingActivity(),
-                "2" => new ReflectionActivity(),
-                "3" => new ListingActivity(),
-                "4" => null,
-                _ => null
-            };
-
-            if (activity == null)
-            {
+                running = false;
                 break;
             }
 
-            activity.Execute();
-            Console.Clear();
+            Console.WriteLine("Enter the duration in seconds:");
+            int duration = int.Parse(Console.ReadLine());
+
+            MindfulnessActivity activity = choice switch
+            {
+                "1" => new BreathingActivity(duration),
+                "2" => new ReflectionActivity(duration),
+                "3" => new ListingActivity(duration),
+                _ => null
+            };
+
+            activity?.Execute();
+
+            Console.WriteLine("Press any key to return to the main menu...");
+            Console.ReadKey();
         }
     }
 }

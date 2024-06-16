@@ -1,45 +1,32 @@
 using System;
-using System.Threading;
 
 public class ListingActivity : MindfulnessActivity
 {
-    private static readonly string[] Prompts = new[]
-    {
-        "Who are people that you appreciate?",
-        "What are personal strengths of yours?",
-        "Who are people that you have helped this week?",
-        "When have you felt the Holy Ghost this month?",
-        "Who are some of your personal heroes?"
-    };
+    private string[] _prompts = { "List things you are grateful for.", "List your favorite activities." };
 
-    public ListingActivity()
+    public ListingActivity(int duration)
+        : base("Listing", "This activity will help you list and acknowledge positive aspects of your life.")
     {
-        Name = "Listing";
-        Description = "This activity will help you reflect on the good things in your life by having you list as many things as you can in a certain area.";
+        _duration = duration;
     }
 
     public override void Execute()
     {
         StartActivity();
-
-        Random random = new Random();
-        string prompt = Prompts[random.Next(Prompts.Length)];
+        string prompt = GetRandomPrompt();
         Console.WriteLine(prompt);
-        ShowCountdown(5);
-
-        int timeRemaining = Duration - 5;
-        Console.WriteLine("Start listing items:");
-        int itemCount = 0;
-
-        while (timeRemaining > 0)
+        ShowSpinner(5);
+        for (int i = 0; i < _duration / 5; i++)
         {
-            Console.Write("Item: ");
+            Console.Write("- ");
             Console.ReadLine();
-            itemCount++;
-            timeRemaining -= 5;
         }
-
-        Console.WriteLine($"You listed {itemCount} items.");
         EndActivity();
+    }
+
+    private string GetRandomPrompt()
+    {
+        Random random = new Random();
+        return _prompts[random.Next(_prompts.Length)];
     }
 }

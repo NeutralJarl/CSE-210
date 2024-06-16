@@ -1,32 +1,25 @@
 using System;
-using System.Threading;
 
 public class BreathingActivity : MindfulnessActivity
 {
-    public BreathingActivity()
+    public BreathingActivity(int duration) 
+        : base("Breathing", "This activity will help you relax by guiding you through slow breathing exercises.")
     {
-        Name = "Breathing";
-        Description = "This activity will help you relax by walking you through breathing in and out slowly. Clear your mind and focus on your breathing.";
+        _duration = duration;
     }
 
     public override void Execute()
     {
         StartActivity();
-
-        int cycleDuration = 8; // Each cycle (breathe in and out) takes 8 seconds
-        int timeRemaining = Duration;
-
-        while (timeRemaining >= cycleDuration)
+        for (int i = 0; i < _duration / 6; i++)
         {
             Console.WriteLine("Breathe in...");
-            ShowCountdown(4);
-            timeRemaining -= 4;
-
+            ShowCountdown(2);
+            Console.WriteLine("Hold...");
+            ShowCountdown(2);
             Console.WriteLine("Breathe out...");
-            ShowCountdown(4);
-            timeRemaining -= 4;
+            ShowCountdown(2);
         }
-
         EndActivity();
     }
 }
