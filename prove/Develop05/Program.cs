@@ -1,6 +1,6 @@
 using System;
 
-namespace EternalQuest
+namespace EternalQuest // extra stuff! i added a prestige system as well as a ranking system for every 1000 points you score. for every 10000 points your rank resets but you get a star by your rank.
 {
     class Program
     {

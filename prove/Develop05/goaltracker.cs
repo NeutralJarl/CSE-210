@@ -8,12 +8,28 @@ namespace EternalQuest
     {
         private List<Goal> _goals;
         private int _totalScore;
+        private int _prestigeCount;
+        private Dictionary<string, int> _rankCounts;
         private readonly string _filePath = "goals.txt";
+
+        // Define ranks based on last 4 digits of total score
+        private string[] _ranks = {
+            "Novice", "Apprentice", "Journeyman", "Expert", "Master",
+            "Grandmaster", "Legend", "Hero", "Champion", "Immortal"
+        };
 
         public GoalTracker()
         {
             _goals = new List<Goal>();
             _totalScore = 0;
+            _prestigeCount = 0;
+            _rankCounts = new Dictionary<string, int>();
+
+            // Initialize rank counts
+            foreach (string rank in _ranks)
+            {
+                _rankCounts.Add(rank, 0);
+            }
         }
 
         public void AddGoal()
@@ -57,25 +73,65 @@ namespace EternalQuest
             DisplayGoals();
 
             Console.Write("Enter goal number to record: ");
-            int goalNumber = int.Parse(Console.ReadLine()) - 1;
-
-            if (goalNumber >= 0 && goalNumber < _goals.Count)
-            {
-                Goal goal = _goals[goalNumber];
-                goal.Record();
-
-                int pointsAwarded = goal.Points;
-                if (goal is ChecklistGoal checklistGoal && checklistGoal.IsCompleted())
-                {
-                    pointsAwarded += checklistGoal.BonusPoints;
-                }
-
-                _totalScore += pointsAwarded;
-                Console.WriteLine($"Recorded! You earned {pointsAwarded} points. Total score: {_totalScore}");
-            }
-            else
+            int goalNumber;
+            if (!int.TryParse(Console.ReadLine(), out goalNumber) || goalNumber < 1 || goalNumber > _goals.Count)
             {
                 Console.WriteLine("Invalid goal number.");
+                return;
+            }
+
+            goalNumber--; // Adjust for 0-based index
+            Goal goal = _goals[goalNumber];
+            goal.Record();
+
+            int pointsAwarded = goal.Points;
+            if (goal is ChecklistGoal checklistGoal && checklistGoal.IsCompleted())
+            {
+                pointsAwarded += checklistGoal.BonusPoints;
+            }
+
+            _totalScore += pointsAwarded;
+            Console.WriteLine($"Recorded! You earned {pointsAwarded} points. Total score: {_totalScore}");
+
+            // Check for rank up or prestige
+            CheckForRankUpOrPrestige();
+        }
+
+        private void CheckForRankUpOrPrestige()
+        {
+            // Calculate last 4 digits of total score
+            int lastFourDigits = _totalScore % 10000;
+
+            // Determine rank based on last 4 digits
+            int rankIndex = lastFourDigits / 1000;
+            if (rankIndex >= _ranks.Length)
+            {
+                rankIndex = _ranks.Length - 1; // Cap at highest rank
+            }
+            string currentRank = _ranks[rankIndex];
+
+            // Update rank count
+            _rankCounts[currentRank]++;
+
+            // Check if score has increased by 10,000 points
+            if (_totalScore >= (_prestigeCount + 1) * 10000)
+            {
+                ApplyPrestige();
+            }
+        }
+
+        private void ApplyPrestige()
+        {
+            // Increment prestige count
+            _prestigeCount++;
+
+            // Display prestige achieved
+            Console.WriteLine($"Prestige! You have reset to {_ranks[0]} with {_prestigeCount} prestige(s).");
+
+            // Reset rank counts for each rank
+            foreach (var rank in _rankCounts.Keys)
+            {
+                _rankCounts[rank] = 0;
             }
         }
 
@@ -92,6 +148,22 @@ namespace EternalQuest
         public void DisplayScore()
         {
             Console.WriteLine($"\nTotal Score: {_totalScore}");
+
+            // Calculate last 4 digits of total score
+            int lastFourDigits = _totalScore % 10000;
+
+            // Determine rank based on last 4 digits
+            int rankIndex = lastFourDigits / 1000;
+            if (rankIndex >= _ranks.Length)
+            {
+                rankIndex = _ranks.Length - 1; // Cap at highest rank
+            }
+            string currentRank = _ranks[rankIndex];
+
+            // Display current rank with stars for prestige
+            int stars = _prestigeCount;
+            string rankDisplay = currentRank + new string('*', stars);
+            Console.WriteLine($"Current Rank: {rankDisplay}");
         }
 
         public void SaveData()
@@ -99,6 +171,13 @@ namespace EternalQuest
             using (StreamWriter writer = new StreamWriter(_filePath))
             {
                 writer.WriteLine(_totalScore);
+                writer.WriteLine(_prestigeCount);
+                writer.WriteLine(_rankCounts.Count);
+                foreach (var kvp in _rankCounts)
+                {
+                    writer.WriteLine($"{kvp.Key};{kvp.Value}");
+                }
+
                 foreach (var goal in _goals)
                 {
                     string goalType = goal.GetType().Name;
@@ -127,6 +206,19 @@ namespace EternalQuest
                 using (StreamReader reader = new StreamReader(_filePath))
                 {
                     _totalScore = int.Parse(reader.ReadLine());
+                    _prestigeCount = int.Parse(reader.ReadLine());
+
+                    _rankCounts.Clear();
+                    int rankCount = int.Parse(reader.ReadLine());
+                    for (int i = 0; i < rankCount; i++)
+                    {
+                        string[] rankData = reader.ReadLine().Split(';');
+                        string rankName = rankData[0];
+                        int count = int.Parse(rankData[1]);
+                        _rankCounts.Add(rankName, count);
+                    }
+
+                    _goals.Clear();
                     while (!reader.EndOfStream)
                     {
                         string[] goalData = reader.ReadLine().Split(';');

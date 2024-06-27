@@ -1,0 +1,17 @@
+12500
+1
+10
+Novice;0
+Apprentice;0
+Journeyman;0
+Expert;0
+Master;0
+Grandmaster;0
+Legend;0
+Hero;0
+Champion;0
+Immortal;0
+EternalGoal;test;2500
+1
+EternalGoal;test 2;10000
+1
