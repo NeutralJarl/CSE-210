@@ -6,5 +6,5 @@ public abstract class Exercise
     public TimeSpan Duration { get; set; }
     public double CaloriesBurned { get; set; }
 
-    public abstract double CalculateCaloriesBurned();
+    public abstract double CalculateCaloriesBurned(); // Ensure method name matches
 }

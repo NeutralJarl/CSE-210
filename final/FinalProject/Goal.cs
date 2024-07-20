@@ -1,16 +1,18 @@
 public class Goal
 {
     public string Type { get; set; }
-    public double Target { get; set; }
-    public double CurrentProgress { get; set; }
+    public double Target { get; set; }  // Target here will be the total calories to burn
+    public double Progress { get; set; }  // Progress here will be the total calories burned
 
-    public void UpdateProgress(double progress)
+    public Goal(string type, double target)
     {
-        CurrentProgress = progress;
+        Type = type;
+        Target = target;
+        Progress = 0;
     }
 
     public bool IsGoalAchieved()
     {
-        return CurrentProgress <= Target;
+        return Progress >= Target;
     }
 }

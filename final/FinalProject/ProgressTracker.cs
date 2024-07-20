@@ -1,33 +1,38 @@
 public class ProgressTracker
 {
-    public void TrackWorkoutProgress(User user)
+    public void UpdateGoalsBasedOnWorkouts(User user)
     {
-        foreach (var workout in user.Workouts)
+        double totalCaloriesBurned = 0;
+
+        foreach (var workout in user.GetWorkouts())
         {
-            // Logic to track workout progress
-            // For example, update goals based on workouts
-            foreach (var goal in user.Goals)
+            totalCaloriesBurned += workout.GetTotalCaloriesBurned();
+        }
+
+        foreach (var goal in user.GetGoals())
+        {
+            if (goal.Type == "Calorie Burn")
             {
-                if (goal.Type == "Weight Loss")
-                {
-                    goal.UpdateProgress(user.Weight - workout.GetTotalCaloriesBurned() / 7700); // Roughly 7700 calories per kg
-                }
+                goal.Progress = totalCaloriesBurned;
             }
         }
     }
 
-    public void TrackDietProgress(User user)
+    public void UpdateGoalsBasedOnDiets(User user)
     {
-        foreach (var diet in user.Diets)
+        double totalCaloriesIntake = 0;
+
+        foreach (var diet in user.GetDiets())
         {
-            // Logic to track diet progress
-            // For example, update goals based on diet
-            foreach (var goal in user.Goals)
+            totalCaloriesIntake += diet.GetTotalCalories();
+        }
+
+        foreach (var goal in user.GetGoals())
+        {
+            if (goal.Type == "Calorie Burn")
             {
-                if (goal.Type == "Weight Loss")
-                {
-                    goal.UpdateProgress(user.Weight - diet.GetTotalCalories() / 7700); // Roughly 7700 calories per kg
-                }
+                double caloriesLeftToBurn = totalCaloriesIntake - goal.Progress;
+                goal.Target = caloriesLeftToBurn;
             }
         }
     }

@@ -4,11 +4,14 @@ public class StrengthExercise : Exercise
 {
     public int Reps { get; set; }
     public int Sets { get; set; }
-    public double Weight { get; set; }
+    public double Weight { get; set; } // Weight lifted in kilograms
 
     public override double CalculateCaloriesBurned()
     {
-        // Example calculation (this is just an illustrative formula)
-        return Reps * Sets * Weight * 0.1;
+        double MET = 6.0;  // MET value for strength training
+        double durationHours = Duration.TotalHours;
+        double weightInKg = 70;  // Replace with actual user weight or input
+        
+        return durationHours * MET * weightInKg;
     }
 }
